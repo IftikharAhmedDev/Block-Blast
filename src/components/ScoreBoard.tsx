@@ -25,8 +25,8 @@ export const ScoreBoard: React.FC<ScoreBoardProps> = React.memo(({
       {/* Top Header Row: Crown + Best Score on Left, Control Buttons on Right */}
       <div className="w-full flex items-center justify-between py-1">
         {/* High Score / Best */}
-        <div className="flex items-center gap-1.5 text-amber-400">
-          <Crown className="w-6 h-6 fill-amber-400 text-amber-400 drop-shadow-[0_2px_8px_rgba(251,191,36,0.6)]" />
+        <div className="flex items-center gap-1.5 text-amber-400 drop-shadow-[0_0_12px_rgba(251,191,36,0.8)]">
+          <Crown className="w-6 h-6 fill-amber-400 text-amber-400" />
           <span className="text-xl sm:text-2xl font-black tracking-tight text-amber-400">
             {highScore.toLocaleString()}
           </span>
@@ -73,8 +73,8 @@ export const ScoreBoard: React.FC<ScoreBoardProps> = React.memo(({
       <div className="flex flex-col items-center justify-center -mt-1 relative">
         {/* Glowing Pink Heart emblem behind/above score */}
         <div className="relative flex items-center justify-center">
-          <div className="absolute w-12 h-12 bg-pink-500/60 rounded-full blur-xl animate-pulse pointer-events-none" />
-          <Heart className="w-10 h-10 sm:w-11 sm:h-11 fill-pink-500 text-pink-400 drop-shadow-[0_0_16px_rgba(236,72,153,0.9)] transition-transform duration-200 hover:scale-110" />
+          <div className="absolute w-16 h-16 bg-gradient-to-r from-pink-500 via-fuchsia-500 to-rose-500 rounded-full blur-xl opacity-90 animate-pulse pointer-events-none" />
+          <Heart className="w-11 h-11 sm:w-12 sm:h-12 fill-pink-500 text-pink-400 drop-shadow-[0_0_25px_rgba(236,72,153,1)] transition-transform duration-200 hover:scale-110" />
         </div>
 
         {/* Big Bold Current Score */}

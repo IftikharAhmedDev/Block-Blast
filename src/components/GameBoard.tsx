@@ -44,7 +44,7 @@ export const GameBoard: React.FC<GameBoardProps> = React.memo(({
         ref={boardRef}
         role="grid"
         aria-label="Block Blast 8x8 Puzzle Board"
-        className="w-full h-full grid grid-cols-8 grid-rows-8 gap-[1px] bg-[#1a2446] touch-none"
+        className="w-full h-full grid grid-cols-8 grid-rows-8 gap-0 bg-[#161e3b] touch-none"
         style={{
           display: 'grid',
           gridTemplateColumns: `repeat(${boardSize}, minmax(0, 1fr))`,
