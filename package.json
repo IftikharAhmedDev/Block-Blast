@@ -12,8 +12,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
-    "deploy": "npm run build && wrangler deploy",
-    "deploy:pages": "npm run build && wrangler pages deploy dist --project-name=block-blast-puzzle"
+    "deploy": "npm run build && npx wrangler deploy",
+    "deploy:pages": "npm run build && npx wrangler pages deploy dist --project-name=website"
   },
   "dependencies": {
     "lucide-react": "^0.475.0",
