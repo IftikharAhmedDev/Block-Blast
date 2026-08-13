@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+
+# Production build outputs
+dist/
+dist-ssr/
+
+# Logs and environment
+*.log
+.env
+.env.local
+.env.*.local
+
+# Cloudflare Wrangler & temporary files
+.wrangler/
+.dev.vars
+
+# Editor & OS files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Internal task logs & scratch files
+.system_generated/

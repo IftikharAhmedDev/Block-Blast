@@ -1,0 +1,16 @@
+{
+  "name": "Block Blast Puzzle",
+  "short_name": "Block Blast",
+  "description": "High-performance responsive block puzzle game",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#090D16",
+  "theme_color": "#6366F1",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
