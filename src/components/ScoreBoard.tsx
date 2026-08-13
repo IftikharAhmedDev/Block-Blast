@@ -25,21 +25,21 @@ export const ScoreBoard: React.FC<ScoreBoardProps> = React.memo(({
       {/* Top Header Row: Crown + Best Score on Left, Control Buttons on Right */}
       <div className="w-full flex items-center justify-between py-1">
         {/* High Score / Best */}
-        <div className="flex items-center gap-1.5 text-amber-400 drop-shadow-[0_0_12px_rgba(251,191,36,0.8)]">
-          <Crown className="w-6 h-6 fill-amber-400 text-amber-400" />
-          <span className="text-xl sm:text-2xl font-black tracking-tight text-amber-400">
+        <div className="flex items-center gap-1.5 text-[#facc15]">
+          <Crown className="w-5 h-5 sm:w-6 sm:h-6 fill-[#facc15] text-[#facc15]" />
+          <span className="text-lg sm:text-xl font-extrabold tracking-tight text-[#facc15]">
             {highScore.toLocaleString()}
           </span>
         </div>
 
-        {/* Action Controls (Pause, Restart, Settings) */}
-        <div className="flex items-center gap-2">
+        {/* Action Controls (Settings, Pause, Restart) */}
+        <div className="flex items-center gap-1.5">
           {onPause && (
             <button
               onClick={onPause}
               title="Pause Game"
               aria-label="Pause Game"
-              className="p-2 rounded-xl bg-[#1d274c]/80 border border-[#2a386c] text-slate-200 hover:text-white active:scale-95 transition-all shadow-sm"
+              className="p-1.5 sm:p-2 rounded-xl text-slate-300 hover:text-white active:scale-95 transition-all"
             >
               <Pause className="w-4 h-4 fill-current" />
             </button>
@@ -50,7 +50,7 @@ export const ScoreBoard: React.FC<ScoreBoardProps> = React.memo(({
               onClick={onRestart}
               title="Restart Game"
               aria-label="Restart Game"
-              className="p-2 rounded-xl bg-[#1d274c]/80 border border-[#2a386c] text-slate-200 hover:text-white active:scale-95 transition-all shadow-sm"
+              className="p-1.5 sm:p-2 rounded-xl text-slate-300 hover:text-white active:scale-95 transition-all"
             >
               <RotateCcw className="w-4 h-4" />
             </button>
@@ -61,9 +61,9 @@ export const ScoreBoard: React.FC<ScoreBoardProps> = React.memo(({
               onClick={onOpenSettings}
               title="Settings"
               aria-label="Settings"
-              className="p-2 rounded-xl bg-[#1d274c]/80 border border-[#2a386c] text-slate-200 hover:text-white active:scale-95 transition-all shadow-sm"
+              className="p-1.5 sm:p-2 rounded-xl text-slate-300 hover:text-white active:scale-95 transition-all"
             >
-              <Settings className="w-5 h-5" />
+              <Settings className="w-5 h-5 sm:w-6 sm:h-6 fill-current" />
             </button>
           )}
         </div>
@@ -72,13 +72,13 @@ export const ScoreBoard: React.FC<ScoreBoardProps> = React.memo(({
       {/* Main Score Area: Glowing Pink Heart above Giant White Score */}
       <div className="flex flex-col items-center justify-center -mt-1 relative">
         {/* Glowing Pink Heart emblem behind/above score */}
-        <div className="relative flex items-center justify-center">
-          <div className="absolute w-16 h-16 bg-gradient-to-r from-pink-500 via-fuchsia-500 to-rose-500 rounded-full blur-xl opacity-90 animate-pulse pointer-events-none" />
-          <Heart className="w-11 h-11 sm:w-12 sm:h-12 fill-pink-500 text-pink-400 drop-shadow-[0_0_25px_rgba(236,72,153,1)] transition-transform duration-200 hover:scale-110" />
+        <div className="relative flex items-center justify-center -mb-2">
+          <div className="absolute w-14 h-14 bg-gradient-to-tr from-pink-500 via-fuchsia-500 to-purple-500 rounded-full blur-lg opacity-80 animate-pulse pointer-events-none" />
+          <Heart className="w-10 h-10 sm:w-12 sm:h-12 fill-pink-500 text-pink-400 drop-shadow-[0_0_20px_rgba(236,72,153,0.9)] transition-transform duration-200 hover:scale-105" />
         </div>
 
         {/* Big Bold Current Score */}
-        <span className="text-4xl sm:text-5xl font-black tracking-tight text-white drop-shadow-[0_4px_10px_rgba(0,0,0,0.6)] -mt-1">
+        <span className="text-4xl sm:text-5xl font-extrabold tracking-tight text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
           {score.toLocaleString()}
         </span>
 

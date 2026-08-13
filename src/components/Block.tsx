@@ -37,16 +37,14 @@ export const Block: React.FC<BlockProps> = React.memo(({
 
   return (
     <div
-      className={`w-full h-full rounded-[3px] sm:rounded-sm transition-transform ${animationClass} ${className}`}
+      className={`w-full h-full rounded-[2px] transition-transform ${animationClass} ${className}`}
       style={{
         backgroundColor: color,
-        boxShadow: `
-          inset 0 2.5px 2px rgba(255, 255, 255, 0.45),
-          inset 2.5px 0 2px rgba(255, 255, 255, 0.25),
-          inset 0 -2.5px 3px rgba(0, 0, 0, 0.4),
-          inset -2.5px 0 3px rgba(0, 0, 0, 0.3),
-          0 2px 4px rgba(0, 0, 0, 0.4)
-        `,
+        borderTop: '2px solid rgba(255, 255, 255, 0.45)',
+        borderLeft: '2px solid rgba(255, 255, 255, 0.35)',
+        borderBottom: '2px solid rgba(0, 0, 0, 0.4)',
+        borderRight: '2px solid rgba(0, 0, 0, 0.3)',
+        boxShadow: 'inset 0 1px 1px rgba(255, 255, 255, 0.3), inset 0 -1px 2px rgba(0, 0, 0, 0.35)',
       }}
     />
   );
