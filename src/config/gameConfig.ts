@@ -14,14 +14,14 @@ export const GAME_CONFIG = {
 } as const;
 
 export const PIECE_COLORS = [
-  '#6366F1', // Indigo
-  '#10B981', // Emerald
-  '#F59E0B', // Amber
-  '#EC4899', // Pink
-  '#06B6D4', // Cyan
-  '#8B5CF6', // Violet
-  '#F97316', // Orange
+  '#38BDF8', // Cyan / Sky Blue
+  '#3B82F6', // Royal Blue
+  '#F97316', // Bright Orange
+  '#A855F7', // Vivid Purple
+  '#EAB308', // Gold / Yellow
+  '#22C55E', // Emerald Green
   '#EF4444', // Red
+  '#EC4899', // Pink
 ] as const;
 
 export interface ShapeDefinition {

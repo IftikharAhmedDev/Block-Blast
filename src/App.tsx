@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import { useGameStore } from './store/useGameStore';
 import { useDragAndDrop } from './hooks/useDragAndDrop';
 import { useKeyboardControls } from './hooks/useKeyboardControls';
-import { Controls } from './components/Controls';
 import { ScoreBoard } from './components/ScoreBoard';
 import { GameBoard } from './components/GameBoard';
 import { PieceTray } from './components/PieceTray';
@@ -80,28 +79,22 @@ export function App() {
       onPointerMove={onPointerMove}
       onPointerUp={endDrag}
       onPointerCancel={endDrag}
-      className="min-h-screen h-[100dvh] bg-slate-950 text-slate-100 flex flex-col items-center justify-between p-4 sm:p-6 pt-[env(safe-area-inset-top,1rem)] pb-[env(safe-area-inset-bottom,1rem)] select-none touch-none overflow-hidden relative"
+      className="min-h-screen h-[100dvh] bg-[#25325c] text-slate-100 flex flex-col items-center justify-between p-3 sm:p-5 pt-[env(safe-area-inset-top,0.75rem)] pb-[env(safe-area-inset-bottom,0.75rem)] select-none touch-none overflow-hidden relative"
     >
-      {/* Vibrant background ambient glows */}
-      <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-[550px] h-[550px] bg-gradient-to-b from-indigo-600/30 via-violet-600/20 to-transparent rounded-full blur-[110px] pointer-events-none" />
-      <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-gradient-to-t from-violet-600/25 via-pink-600/15 to-transparent rounded-full blur-[100px] pointer-events-none" />
-      <div className="absolute top-1/3 left-10 w-72 h-72 bg-emerald-500/15 rounded-full blur-[90px] pointer-events-none" />
-      <div className="absolute top-2/3 right-10 w-72 h-72 bg-amber-500/15 rounded-full blur-[90px] pointer-events-none" />
+      {/* Subtle background ambient glows */}
+      <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-[550px] h-[550px] bg-indigo-500/15 rounded-full blur-[110px] pointer-events-none" />
+      <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-purple-500/15 rounded-full blur-[100px] pointer-events-none" />
 
-      <main className="w-full max-w-md flex flex-col gap-4 sm:gap-5 z-10 my-auto relative">
-        {/* Top bar controls */}
-        <Controls
-          onPause={pauseGame}
-          onRestart={restartGame}
-          onOpenSettings={() => setIsSettingsOpen(true)}
-        />
-
-        {/* Score & Combo HUD */}
+      <main className="w-full max-w-md flex flex-col gap-3 sm:gap-4 z-10 my-auto relative">
+        {/* Unified Top Score & Controls HUD */}
         <ScoreBoard
           score={score}
           highScore={highScore}
           comboCount={comboCount}
           streakCount={streakCount}
+          onPause={pauseGame}
+          onRestart={restartGame}
+          onOpenSettings={() => setIsSettingsOpen(true)}
         />
 
         {/* Floating Score Popups Container */}

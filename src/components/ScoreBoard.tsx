@@ -1,11 +1,14 @@
 import React from 'react';
-import { Trophy, Zap, Flame } from 'lucide-react';
+import { Crown, Heart, Zap, Flame, Pause, RotateCcw, Settings } from 'lucide-react';
 
 interface ScoreBoardProps {
   score: number;
   highScore: number;
   comboCount: number;
   streakCount: number;
+  onPause?: () => void;
+  onRestart?: () => void;
+  onOpenSettings?: () => void;
 }
 
 export const ScoreBoard: React.FC<ScoreBoardProps> = React.memo(({
@@ -13,43 +16,88 @@ export const ScoreBoard: React.FC<ScoreBoardProps> = React.memo(({
   highScore,
   comboCount,
   streakCount,
+  onPause,
+  onRestart,
+  onOpenSettings,
 }) => {
   return (
-    <div className="w-full max-w-md mx-auto flex items-center justify-between gap-3 p-3 sm:p-4 bg-slate-900/40 rounded-2xl border border-slate-700/40 backdrop-blur-xl shadow-lg">
-      {/* Current Score */}
-      <div className="flex flex-col">
-        <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">Score</span>
-        <span className="text-2xl sm:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white to-indigo-200">
+    <div className="w-full max-w-md mx-auto flex flex-col gap-1 px-2 select-none">
+      {/* Top Header Row: Crown + Best Score on Left, Control Buttons on Right */}
+      <div className="w-full flex items-center justify-between py-1">
+        {/* High Score / Best */}
+        <div className="flex items-center gap-1.5 text-amber-400">
+          <Crown className="w-6 h-6 fill-amber-400 text-amber-400 drop-shadow-[0_2px_8px_rgba(251,191,36,0.6)]" />
+          <span className="text-xl sm:text-2xl font-black tracking-tight text-amber-400">
+            {highScore.toLocaleString()}
+          </span>
+        </div>
+
+        {/* Action Controls (Pause, Restart, Settings) */}
+        <div className="flex items-center gap-2">
+          {onPause && (
+            <button
+              onClick={onPause}
+              title="Pause Game"
+              aria-label="Pause Game"
+              className="p-2 rounded-xl bg-[#1d274c]/80 border border-[#2a386c] text-slate-200 hover:text-white active:scale-95 transition-all shadow-sm"
+            >
+              <Pause className="w-4 h-4 fill-current" />
+            </button>
+          )}
+
+          {onRestart && (
+            <button
+              onClick={onRestart}
+              title="Restart Game"
+              aria-label="Restart Game"
+              className="p-2 rounded-xl bg-[#1d274c]/80 border border-[#2a386c] text-slate-200 hover:text-white active:scale-95 transition-all shadow-sm"
+            >
+              <RotateCcw className="w-4 h-4" />
+            </button>
+          )}
+
+          {onOpenSettings && (
+            <button
+              onClick={onOpenSettings}
+              title="Settings"
+              aria-label="Settings"
+              className="p-2 rounded-xl bg-[#1d274c]/80 border border-[#2a386c] text-slate-200 hover:text-white active:scale-95 transition-all shadow-sm"
+            >
+              <Settings className="w-5 h-5" />
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Main Score Area: Glowing Pink Heart above Giant White Score */}
+      <div className="flex flex-col items-center justify-center -mt-1 relative">
+        {/* Glowing Pink Heart emblem behind/above score */}
+        <div className="relative flex items-center justify-center">
+          <div className="absolute w-12 h-12 bg-pink-500/60 rounded-full blur-xl animate-pulse pointer-events-none" />
+          <Heart className="w-10 h-10 sm:w-11 sm:h-11 fill-pink-500 text-pink-400 drop-shadow-[0_0_16px_rgba(236,72,153,0.9)] transition-transform duration-200 hover:scale-110" />
+        </div>
+
+        {/* Big Bold Current Score */}
+        <span className="text-4xl sm:text-5xl font-black tracking-tight text-white drop-shadow-[0_4px_10px_rgba(0,0,0,0.6)] -mt-1">
           {score.toLocaleString()}
         </span>
-      </div>
 
-      {/* Badges: Combo & Streak */}
-      <div className="flex items-center gap-2">
-        {comboCount > 1 && (
-          <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-500/20 border border-amber-500/40 text-amber-300 animate-combo-pop">
-            <Zap className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-            <span className="text-xs font-bold">{comboCount}x Combo</span>
-          </div>
-        )}
+        {/* Badges: Combo & Streak */}
+        <div className="flex items-center gap-2 mt-1">
+          {comboCount > 1 && (
+            <div className="flex items-center gap-1 px-3 py-0.5 rounded-full bg-amber-500/20 border border-amber-400/40 text-amber-300 animate-combo-pop shadow-md">
+              <Zap className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+              <span className="text-xs font-extrabold">{comboCount}x COMBO</span>
+            </div>
+          )}
 
-        {streakCount > 0 && (
-          <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-orange-500/20 border border-orange-500/40 text-orange-300">
-            <Flame className="w-3.5 h-3.5 fill-orange-400 text-orange-400" />
-            <span className="text-xs font-bold">{streakCount} Streak</span>
-          </div>
-        )}
-      </div>
-
-      {/* High Score */}
-      <div className="flex flex-col items-end">
-        <div className="flex items-center gap-1 text-amber-400">
-          <Trophy className="w-3.5 h-3.5" />
-          <span className="text-xs font-semibold uppercase tracking-wider">Best</span>
+          {streakCount > 0 && (
+            <div className="flex items-center gap-1 px-3 py-0.5 rounded-full bg-orange-500/20 border border-orange-400/40 text-orange-300 shadow-md">
+              <Flame className="w-3.5 h-3.5 fill-orange-400 text-orange-400" />
+              <span className="text-xs font-extrabold">{streakCount} STREAK</span>
+            </div>
+          )}
         </div>
-        <span className="text-lg sm:text-xl font-bold text-slate-200">
-          {highScore.toLocaleString()}
-        </span>
       </div>
     </div>
   );

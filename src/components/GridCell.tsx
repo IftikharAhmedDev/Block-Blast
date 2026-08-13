@@ -28,13 +28,13 @@ export const GridCell: React.FC<GridCellProps> = React.memo(({
       role="gridcell"
       aria-label={`Cell row ${row + 1} column ${col + 1}${cell.occupied ? ' occupied' : ' empty'}`}
       data-testid={`cell-${row}-${col}`}
-      className={`relative w-full h-full rounded-md transition-colors p-[0.5px] flex items-center justify-center ${
+      className={`relative w-full h-full rounded-[2px] sm:rounded-[3px] transition-colors p-0 flex items-center justify-center ${
         isKeyboardFocused ? 'ring-2 ring-indigo-400 z-30 scale-105' : ''
       } ${
         isAltPattern
-          ? 'bg-slate-900/60 border border-slate-800/40'
-          : 'bg-slate-900/35 border border-slate-800/25'
-      } cell-shadow`}
+          ? 'bg-[#161e3d] border border-[#1d274f]'
+          : 'bg-[#141b38] border border-[#1a2347]'
+      }`}
     >
       {cell.occupied && cell.color && (
         <Block color={cell.color} isClearing={isClearing} />

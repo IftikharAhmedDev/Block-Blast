@@ -39,12 +39,12 @@ export const GameBoard: React.FC<GameBoardProps> = React.memo(({
   };
 
   return (
-    <div className="w-full max-w-md mx-auto aspect-square p-1.5 sm:p-2 bg-slate-900/40 rounded-3xl border border-slate-700/50 backdrop-blur-2xl shadow-2xl relative overflow-hidden">
+    <div className="w-full max-w-md mx-auto aspect-square p-1.5 sm:p-2 bg-[#141b36] rounded-xl sm:rounded-2xl border-2 border-[#1e2950] shadow-[0_8px_25px_rgba(0,0,0,0.6)] relative overflow-hidden">
       <div
         ref={boardRef}
         role="grid"
         aria-label="Block Blast 8x8 Puzzle Board"
-        className="w-full h-full grid grid-cols-8 grid-rows-8 gap-[1px] touch-none"
+        className="w-full h-full grid grid-cols-8 grid-rows-8 gap-[1px] bg-[#1a2446] touch-none"
         style={{
           display: 'grid',
           gridTemplateColumns: `repeat(${boardSize}, minmax(0, 1fr))`,
