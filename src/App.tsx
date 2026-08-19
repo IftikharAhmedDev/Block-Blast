@@ -40,7 +40,7 @@ export function App() {
     clearBoardClearFlag,
   } = useGameStore();
 
-  const { dragSession, startDrag, onPointerMove, endDrag } = useDragAndDrop(boardRef);
+  const { dragSession, startDrag } = useDragAndDrop(boardRef);
   const { selectedPieceIndex, focusedCellPos } = useKeyboardControls();
 
   // Combine pointer drag or keyboard piece selection for preview
@@ -76,16 +76,9 @@ export function App() {
 
   return (
     <div
-      onPointerMove={onPointerMove}
-      onPointerUp={endDrag}
-      onPointerCancel={endDrag}
-      className="min-h-screen h-[100dvh] bg-[#25325c] text-slate-100 flex flex-col items-center justify-between p-3 sm:p-5 pt-[env(safe-area-inset-top,0.75rem)] pb-[env(safe-area-inset-bottom,0.75rem)] select-none touch-none overflow-hidden relative"
+      className="min-h-screen h-[100dvh] bg-[#2A3C69] text-slate-100 flex flex-col items-center justify-center p-3 sm:p-4 select-none touch-none overflow-hidden relative"
     >
-      {/* Subtle background ambient glows */}
-      <div className="absolute -top-10 left-1/2 -translate-x-1/2 w-[550px] h-[550px] bg-indigo-500/15 rounded-full blur-[110px] pointer-events-none" />
-      <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-purple-500/15 rounded-full blur-[100px] pointer-events-none" />
-
-      <main className="w-full max-w-md flex flex-col gap-3 sm:gap-4 z-10 my-auto relative">
+      <main className="w-full max-w-[400px] flex flex-col justify-between h-full max-h-[780px] z-10 relative">
         {/* Unified Top Score & Controls HUD */}
         <ScoreBoard
           score={score}
@@ -110,32 +103,37 @@ export function App() {
         </div>
 
         {/* 8x8 Main Game Board */}
-        <GameBoard
-          board={board}
-          activePiece={activePiece}
-          hoverPos={activeHoverPos}
-          isValidPlacement={dragSession.isValidPlacement}
-          focusedCellPos={selectedPieceIndex !== null ? focusedCellPos : null}
-          boardRef={boardRef}
-        />
+        <div className="w-full flex-1 flex items-center justify-center my-auto">
+          <GameBoard
+            board={board}
+            activePiece={activePiece}
+            hoverPos={activeHoverPos}
+            isValidPlacement={dragSession.isValidPlacement}
+            previewCompletedLines={dragSession.previewCompletedLines}
+            focusedCellPos={selectedPieceIndex !== null ? focusedCellPos : null}
+            boardRef={boardRef}
+          />
+        </div>
 
         {/* Bottom Tray with 3 Pieces */}
-        <PieceTray
-          pieces={currentPieces}
-          activePieceIndex={dragSession.pieceIndex !== null ? dragSession.pieceIndex : selectedPieceIndex}
-          onStartDrag={startDrag}
-        />
+        <div className="w-full pb-2">
+          <PieceTray
+            pieces={currentPieces}
+            activePieceIndex={dragSession.pieceIndex !== null ? dragSession.pieceIndex : selectedPieceIndex}
+            onStartDrag={startDrag}
+          />
+        </div>
       </main>
 
-      {/* Hardware-Accelerated Floating Piece Dragging Overlay */}
-      {dragSession.isDragging && dragSession.piece && dragSession.dragPos && (
+      {/* Floating Piece Dragging Overlay under Cursor/Touch */}
+      {dragSession.isDragging && dragSession.piece && dragSession.dragPos && dragSession.dragPos.x > 0 && dragSession.dragPos.y > 0 && (
         <div
-          className="fixed top-0 left-0 pointer-events-none z-50 block-preview-shadow animate-pickup will-change-transform"
+          className="fixed top-0 left-0 pointer-events-none z-50 block-preview-shadow will-change-transform"
           style={{
             transform: `translate3d(${dragSession.dragPos.x}px, ${dragSession.dragPos.y}px, 0) translate(-50%, -50%)`,
           }}
         >
-          <PiecePreview piece={dragSession.piece} scale={1.1} />
+          <PiecePreview piece={dragSession.piece} scale={1.15} />
         </div>
       )}
 

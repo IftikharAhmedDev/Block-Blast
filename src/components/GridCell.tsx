@@ -8,6 +8,7 @@ interface GridCellProps {
   col: number;
   isPreview?: boolean;
   isValidPreview?: boolean;
+  isLineHighlight?: boolean;
   isClearing?: boolean;
   isKeyboardFocused?: boolean;
 }
@@ -18,32 +19,36 @@ export const GridCell: React.FC<GridCellProps> = React.memo(({
   col,
   isPreview = false,
   isValidPreview = true,
+  isLineHighlight = false,
   isClearing = false,
   isKeyboardFocused = false,
 }) => {
-  const isAltPattern = (row + col) % 2 === 0;
-
   return (
     <div
       role="gridcell"
       aria-label={`Cell row ${row + 1} column ${col + 1}${cell.occupied ? ' occupied' : ' empty'}`}
       data-testid={`cell-${row}-${col}`}
-      className={`relative w-full h-full rounded-none transition-colors p-0 flex items-center justify-center ${
+      className={`relative w-full h-full p-0 flex items-center justify-center ${
         isKeyboardFocused ? 'ring-2 ring-indigo-400 z-30 scale-105' : ''
       } ${
         cell.occupied
-          ? 'bg-transparent border-0'
-          : isAltPattern
-          ? 'bg-[#151d3b] border-[0.5px] border-[#1d274f]/60'
-          : 'bg-[#131a36] border-[0.5px] border-[#1a2347]/50'
+          ? 'bg-transparent'
+          : 'bg-[#18213B]/80 hover:bg-[#1E2847]/80 transition-colors duration-150'
       }`}
     >
       {cell.occupied && cell.color && (
         <Block color={cell.color} isClearing={isClearing} />
       )}
 
-      {!cell.occupied && isPreview && (
-        <Block color="#6366F1" isPreview={true} isValidPlacement={isValidPreview} />
+      {!cell.occupied && isPreview && isValidPreview && (
+        <Block color="#6366F1" isPreview={true} />
+      )}
+
+      {/* Real-time Line Completion Glowing White Preview Overlay */}
+      {isLineHighlight && (
+        <div
+          className="absolute inset-0 pointer-events-none z-20 rounded-[2px] bg-white/40 border border-white/90 shadow-[0_0_12px_rgba(255,255,255,0.7)] animate-pulse"
+        />
       )}
     </div>
   );

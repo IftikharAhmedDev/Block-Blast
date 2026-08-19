@@ -1,8 +1,15 @@
 import { describe, it, expect } from 'vitest';
 import { createEmptyBoard } from '../engine/board';
-import { findCompletedRows, findCompletedColumns, findCompletedLines, clearLines } from '../engine/lines';
+import {
+  findCompletedRows,
+  findCompletedColumns,
+  findCompletedLines,
+  clearLines,
+  getPreviewCompletedLines,
+} from '../engine/lines';
 
 describe('Lines Pure Engine', () => {
+
   it('detects a completed row', () => {
     const board = createEmptyBoard();
     // Fill row 3
@@ -56,5 +63,39 @@ describe('Lines Pure Engine', () => {
     const clearedBoard = clearLines(board, { rows: [0], cols: [] });
 
     expect(clearedBoard[0].every((cell) => !cell.occupied)).toBe(true);
+  });
+
+  it('predicts line completion accurately during drag preview', () => {
+    const board = createEmptyBoard();
+
+
+    // Fill row 0 except the last cell (0, 7)
+    for (let c = 0; c < 7; c++) {
+      board[0][c] = { occupied: true, color: '#38BDF8' };
+    }
+
+    const dotPiece = {
+      id: 'test_dot',
+      shape: [[1]],
+      color: '#38BDF8',
+      width: 1,
+      height: 1,
+      blockCount: 1,
+    };
+
+    // When hovering over the missing cell (0, 7) -> predicts row 0 completion
+    const preview1 = getPreviewCompletedLines(board, dotPiece, { row: 0, col: 7 });
+    expect(preview1.rows).toEqual([0]);
+    expect(preview1.cols).toEqual([]);
+
+    // When moving away to (1, 7) -> no longer completes row 0, returns empty
+    const preview2 = getPreviewCompletedLines(board, dotPiece, { row: 1, col: 7 });
+    expect(preview2.rows).toEqual([]);
+    expect(preview2.cols).toEqual([]);
+
+    // When placement is invalid (overlapping an occupied cell at 0, 0) -> returns empty
+    const preview3 = getPreviewCompletedLines(board, dotPiece, { row: 0, col: 0 });
+    expect(preview3.rows).toEqual([]);
+    expect(preview3.cols).toEqual([]);
   });
 });

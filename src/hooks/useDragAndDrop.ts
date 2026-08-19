@@ -1,6 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { Piece, Position } from '../types/game';
 import { canPlacePiece } from '../engine/board';
+import { getPreviewCompletedLines } from '../engine/lines';
 import { useGameStore } from '../store/useGameStore';
 import { audioService } from '../services/audioService';
 import { hapticService } from '../services/hapticService';
@@ -12,6 +13,7 @@ export interface DragSession {
   dragPos: { x: number; y: number } | null;
   hoverBoardPos: Position | null;
   isValidPlacement: boolean;
+  previewCompletedLines: { rows: number[]; cols: number[] };
 }
 
 export function useDragAndDrop(boardRef: React.RefObject<HTMLDivElement | null>) {
@@ -22,18 +24,18 @@ export function useDragAndDrop(boardRef: React.RefObject<HTMLDivElement | null>)
     dragPos: null,
     hoverBoardPos: null,
     isValidPlacement: false,
+    previewCompletedLines: { rows: [], cols: [] },
   });
 
   const boardBoundsRef = useRef<DOMRect | null>(null);
   const dragSessionRef = useRef<DragSession>(dragSession);
 
-  // Synchronize ref for instant access inside high-frequency pointer event listeners
   useEffect(() => {
     dragSessionRef.current = dragSession;
   }, [dragSession]);
 
   /**
-   * Recalculates cached board dimensions to prevent layout thrashing on pointermove.
+   * Recalculates cached board dimensions.
    */
   const updateCachedBounds = useCallback(() => {
     if (boardRef.current) {
@@ -41,7 +43,6 @@ export function useDragAndDrop(boardRef: React.RefObject<HTMLDivElement | null>)
     }
   }, [boardRef]);
 
-  // Recalculate bounds on window resize or scroll
   useEffect(() => {
     window.addEventListener('resize', updateCachedBounds, { passive: true });
     window.addEventListener('scroll', updateCachedBounds, { passive: true });
@@ -65,9 +66,9 @@ export function useDragAndDrop(boardRef: React.RefObject<HTMLDivElement | null>)
 
       const cellSize = rect.width / 8;
 
-      // Position the piece centered around touch point with vertical offset for visibility
+      // Position the piece centered around touch point with vertical offset for mobile fingers
       const targetX = clientX - (piece.width * cellSize) / 2;
-      const targetY = clientY - (piece.height * cellSize) / 2 - (piece.height > 1 ? cellSize * 0.5 : 0);
+      const targetY = clientY - (piece.height * cellSize) / 2 - (piece.height > 1 ? cellSize * 0.6 : 0);
 
       const col = Math.round((targetX - rect.left) / cellSize);
       const row = Math.round((targetY - rect.top) / cellSize);
@@ -82,17 +83,6 @@ export function useDragAndDrop(boardRef: React.RefObject<HTMLDivElement | null>)
       e.stopPropagation();
       e.preventDefault();
 
-      // Pointer capture for robust touch/mouse tracking
-      const target = e.currentTarget as HTMLElement;
-      if (target.setPointerCapture) {
-        try {
-          target.setPointerCapture(e.pointerId);
-        } catch {
-          // Ignore
-        }
-      }
-
-      // Cache fresh board bounds at drag start
       updateCachedBounds();
 
       const soundEnabled = useGameStore.getState().settings.soundEnabled;
@@ -110,6 +100,10 @@ export function useDragAndDrop(boardRef: React.RefObject<HTMLDivElement | null>)
         ? canPlacePiece(currentBoard, piece, boardPos)
         : false;
 
+      const predicted = isValid && boardPos
+        ? getPreviewCompletedLines(currentBoard, piece, boardPos)
+        : { rows: [], cols: [] };
+
       const nextSession: DragSession = {
         isDragging: true,
         pieceIndex,
@@ -117,6 +111,7 @@ export function useDragAndDrop(boardRef: React.RefObject<HTMLDivElement | null>)
         dragPos: { x: clientX, y: clientY },
         hoverBoardPos: boardPos,
         isValidPlacement: isValid,
+        previewCompletedLines: predicted,
       };
 
       setDragSession(nextSession);
@@ -124,15 +119,21 @@ export function useDragAndDrop(boardRef: React.RefObject<HTMLDivElement | null>)
     [calculateBoardPosition, updateCachedBounds]
   );
 
-  const onPointerMove = useCallback(
-    (e: React.PointerEvent) => {
+  // Global window event listeners during active drag
+  useEffect(() => {
+    if (!dragSession.isDragging) return;
+
+    const handleWindowPointerMove = (e: PointerEvent) => {
       const session = dragSessionRef.current;
       if (!session.isDragging || !session.piece) return;
 
-      const piece = session.piece;
       const clientX = e.clientX;
       const clientY = e.clientY;
 
+      // Guard against synthetic/zero events
+      if (clientX <= 0 && clientY <= 0) return;
+
+      const piece = session.piece;
       const boardPos = calculateBoardPosition(clientX, clientY, piece);
       const currentBoard = useGameStore.getState().board;
 
@@ -140,72 +141,59 @@ export function useDragAndDrop(boardRef: React.RefObject<HTMLDivElement | null>)
         ? canPlacePiece(currentBoard, piece, boardPos)
         : false;
 
-      const prevPos = session.hoverBoardPos;
-      const isPosChanged =
-        !prevPos ||
-        !boardPos ||
-        prevPos.row !== boardPos.row ||
-        prevPos.col !== boardPos.col;
+      const predicted = isValid && boardPos
+        ? getPreviewCompletedLines(currentBoard, piece, boardPos)
+        : { rows: [], cols: [] };
 
-      const isValidityChanged = session.isValidPlacement !== isValid;
+      setDragSession((prev) => ({
+        ...prev,
+        dragPos: { x: clientX, y: clientY },
+        hoverBoardPos: boardPos,
+        isValidPlacement: isValid,
+        previewCompletedLines: predicted,
+      }));
+    };
+
+    const handleWindowPointerUp = () => {
+      const session = dragSessionRef.current;
+      if (!session.isDragging) return;
 
       if (
-        isPosChanged ||
-        isValidityChanged ||
-        session.dragPos?.x !== clientX ||
-        session.dragPos?.y !== clientY
+        session.pieceIndex !== null &&
+        session.piece &&
+        session.hoverBoardPos &&
+        session.isValidPlacement
       ) {
-        setDragSession({
-          isDragging: true,
-          pieceIndex: session.pieceIndex,
-          piece: session.piece,
-          dragPos: { x: clientX, y: clientY },
-          hoverBoardPos: boardPos,
-          isValidPlacement: isValid,
-        });
+        // Place piece
+        useGameStore.getState().placePieceAction(session.pieceIndex, session.hoverBoardPos);
       }
-    },
-    [calculateBoardPosition]
-  );
 
-  const endDrag = useCallback((e: React.PointerEvent) => {
-    const session = dragSessionRef.current;
-    if (!session.isDragging) return;
+      // Reset
+      setDragSession({
+        isDragging: false,
+        pieceIndex: null,
+        piece: null,
+        dragPos: null,
+        hoverBoardPos: null,
+        isValidPlacement: false,
+        previewCompletedLines: { rows: [], cols: [] },
+      });
+    };
 
-    const target = e.currentTarget as HTMLElement;
-    if (target.releasePointerCapture) {
-      try {
-        target.releasePointerCapture(e.pointerId);
-      } catch {
-        // Ignore
-      }
-    }
+    window.addEventListener('pointermove', handleWindowPointerMove, { passive: true });
+    window.addEventListener('pointerup', handleWindowPointerUp, { passive: true });
+    window.addEventListener('pointercancel', handleWindowPointerUp, { passive: true });
 
-    if (
-      session.pieceIndex !== null &&
-      session.piece &&
-      session.hoverBoardPos &&
-      session.isValidPlacement
-    ) {
-      // Commit placement to Zustand store
-      useGameStore.getState().placePieceAction(session.pieceIndex, session.hoverBoardPos);
-    }
-
-    // Reset drag session
-    setDragSession({
-      isDragging: false,
-      pieceIndex: null,
-      piece: null,
-      dragPos: null,
-      hoverBoardPos: null,
-      isValidPlacement: false,
-    });
-  }, []);
+    return () => {
+      window.removeEventListener('pointermove', handleWindowPointerMove);
+      window.removeEventListener('pointerup', handleWindowPointerUp);
+      window.removeEventListener('pointercancel', handleWindowPointerUp);
+    };
+  }, [dragSession.isDragging, calculateBoardPosition]);
 
   return {
     dragSession,
     startDrag,
-    onPointerMove,
-    endDrag,
   };
 }
+
