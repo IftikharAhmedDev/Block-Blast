@@ -34,7 +34,7 @@ export const PieceTray: React.FC<PieceTrayProps> = React.memo(({
                 <div className="w-10 h-10 rounded-full border-2 border-dashed border-white/40 animate-spin" />
               </div>
             ) : (
-              <div className="w-3 h-3 rounded-full bg-[#1b2548]" />
+              <div className="w-full h-full" />
             )}
           </div>
         );

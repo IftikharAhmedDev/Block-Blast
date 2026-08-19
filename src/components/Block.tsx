@@ -1,9 +1,9 @@
 import React from 'react';
+import { BLOCK_THEMES } from '../config/gameConfig';
 
 interface BlockProps {
   color: string;
   isPreview?: boolean;
-  isValidPlacement?: boolean;
   isNewPlacement?: boolean;
   isClearing?: boolean;
   className?: string;
@@ -12,7 +12,6 @@ interface BlockProps {
 export const Block: React.FC<BlockProps> = React.memo(({
   color,
   isPreview = false,
-  isValidPlacement = true,
   isNewPlacement = false,
   isClearing = false,
   className = '',
@@ -20,14 +19,18 @@ export const Block: React.FC<BlockProps> = React.memo(({
   if (isPreview) {
     return (
       <div
-        className={`w-full h-full rounded-md border-2 transition-all duration-75 ${
-          isValidPlacement
-            ? 'bg-indigo-500/40 border-indigo-300 shadow-[0_0_12px_rgba(99,102,241,0.6)] animate-pulse'
-            : 'bg-rose-500/40 border-rose-400 shadow-[0_0_12px_rgba(244,63,94,0.6)]'
-        } ${className}`}
+        className={`w-full h-full rounded-[2px] border-2 transition-all duration-75 bg-white/35 border-white/90 shadow-[0_0_8px_rgba(255,255,255,0.6)] ${className}`}
       />
     );
   }
+
+  const theme = BLOCK_THEMES[color] || {
+    base: color,
+    top: 'rgba(255, 255, 255, 0.45)',
+    left: 'rgba(255, 255, 255, 0.25)',
+    right: 'rgba(0, 0, 0, 0.25)',
+    bottom: 'rgba(0, 0, 0, 0.45)',
+  };
 
   const animationClass = isClearing
     ? 'animate-line-clear z-20'
@@ -37,17 +40,27 @@ export const Block: React.FC<BlockProps> = React.memo(({
 
   return (
     <div
-      className={`w-full h-full rounded-[2px] transition-transform ${animationClass} ${className}`}
+      className={`w-full h-full relative rounded-[2px] overflow-hidden select-none box-border transition-transform ${animationClass} ${className}`}
       style={{
-        backgroundColor: color,
-        borderTop: '2px solid rgba(255, 255, 255, 0.45)',
-        borderLeft: '2px solid rgba(255, 255, 255, 0.35)',
-        borderBottom: '2px solid rgba(0, 0, 0, 0.4)',
-        borderRight: '2px solid rgba(0, 0, 0, 0.3)',
-        boxShadow: 'inset 0 1px 1px rgba(255, 255, 255, 0.3), inset 0 -1px 2px rgba(0, 0, 0, 0.35)',
+        backgroundColor: theme.base,
+        borderTop: `3.5px solid ${theme.top}`,
+        borderLeft: `3.5px solid ${theme.left}`,
+        borderRight: `3.5px solid ${theme.right}`,
+        borderBottom: `3.5px solid ${theme.bottom}`,
+        boxShadow: 'inset 0 0 1px rgba(0, 0, 0, 0.25)',
       }}
-    />
+    >
+      {/* Center facet highlight */}
+      <div
+        className="w-full h-full pointer-events-none"
+        style={{
+          background: 'linear-gradient(135deg, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.02) 50%, rgba(0,0,0,0.1) 100%)',
+        }}
+      />
+    </div>
   );
 });
 
 Block.displayName = 'Block';
+
+

@@ -1,7 +1,16 @@
-import { Board, Cell } from '../types/game';
+import { Board, Cell, Piece, Position } from '../types/game';
 import { createBoard } from './board';
 
+function createEmptyCell(): Cell {
+  return {
+    occupied: false,
+    color: null,
+    pieceId: null,
+  };
+}
+
 export interface CompletedLines {
+
   rows: number[];
   cols: number[];
   totalLines: number;
@@ -98,10 +107,75 @@ export function clearLines(
   return newBoard;
 }
 
-function createEmptyCell(): Cell {
-  return {
-    occupied: false,
-    color: null,
-    pieceId: null,
-  };
+/**
+ * Predicts which rows and columns would be completed if the given piece were placed at position.
+ * Returns empty arrays if placement is not legal.
+ */
+export function getPreviewCompletedLines(
+  board: Board,
+  piece: Piece,
+  position: Position
+): { rows: number[]; cols: number[] } {
+  const boardSize = board.length;
+  const shape = piece.shape;
+
+  // Boundary and overlap check first
+  for (let r = 0; r < shape.length; r++) {
+    for (let c = 0; c < shape[r].length; c++) {
+      if (shape[r][c] === 1) {
+        const br = position.row + r;
+        const bc = position.col + c;
+        if (br < 0 || br >= boardSize || bc < 0 || bc >= boardSize) {
+          return { rows: [], cols: [] };
+        }
+        if (board[br][bc].occupied) {
+          return { rows: [], cols: [] };
+        }
+      }
+    }
+  }
+
+  // Set of cells that will be occupied by the preview piece
+  const pieceCells = new Set<string>();
+  for (let r = 0; r < shape.length; r++) {
+    for (let c = 0; c < shape[r].length; c++) {
+      if (shape[r][c] === 1) {
+        pieceCells.add(`${position.row + r},${position.col + c}`);
+      }
+    }
+  }
+
+  const rows: number[] = [];
+  const cols: number[] = [];
+
+  // Check which rows would be completely filled
+  for (let r = 0; r < boardSize; r++) {
+    let isFull = true;
+    for (let c = 0; c < boardSize; c++) {
+      if (!board[r][c].occupied && !pieceCells.has(`${r},${c}`)) {
+        isFull = false;
+        break;
+      }
+    }
+    if (isFull) {
+      rows.push(r);
+    }
+  }
+
+  // Check which columns would be completely filled
+  for (let c = 0; c < boardSize; c++) {
+    let isFull = true;
+    for (let r = 0; r < boardSize; r++) {
+      if (!board[r][c].occupied && !pieceCells.has(`${r},${c}`)) {
+        isFull = false;
+        break;
+      }
+    }
+    if (isFull) {
+      cols.push(c);
+    }
+  }
+
+  return { rows, cols };
 }
+

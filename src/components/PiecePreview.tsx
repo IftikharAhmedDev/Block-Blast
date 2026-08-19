@@ -24,7 +24,7 @@ export const PiecePreview: React.FC<PiecePreviewProps> = React.memo(({
   return (
     <div
       onPointerDown={interactive ? onPointerDown : undefined}
-      className={`inline-grid gap-0 p-1.5 rounded-xl transition-transform ${
+      className={`inline-grid gap-[2px] p-1 rounded-xl transition-transform ${
         interactive ? 'cursor-grab active:cursor-grabbing hover:scale-105 touch-none' : ''
       } ${className}`}
       style={{

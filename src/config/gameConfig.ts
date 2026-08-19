@@ -13,16 +13,91 @@ export const GAME_CONFIG = {
   STORAGE_KEY_HIGH_SCORE: 'block_blast_high_score',
 } as const;
 
+export interface BlockFacetColors {
+  base: string;
+  top: string;
+  left: string;
+  right: string;
+  bottom: string;
+}
+
+export const BLOCK_THEMES: Record<string, BlockFacetColors> = {
+  // Cyan / Sky Blue
+  '#38BDF8': {
+    base: '#34BAEB',
+    top: '#8EE0FE',
+    left: '#58CDFC',
+    right: '#1A9CD4',
+    bottom: '#087CAE',
+  },
+  // Cobalt / Royal Blue
+  '#4361EE': {
+    base: '#4A6BF2',
+    top: '#8CA5FA',
+    left: '#6B86F7',
+    right: '#2B4AD4',
+    bottom: '#1A34A8',
+  },
+  // Bright Orange
+  '#F77F00': {
+    base: '#F57A18',
+    top: '#FFA95E',
+    left: '#FA8F39',
+    right: '#D45E06',
+    bottom: '#A84400',
+  },
+  // Vivid Purple
+  '#9D4EDD': {
+    base: '#984DE3',
+    top: '#C88AFA',
+    left: '#B068F5',
+    right: '#772CBF',
+    bottom: '#551891',
+  },
+  // Golden Yellow
+  '#EBB305': {
+    base: '#E5AA15',
+    top: '#FCE068',
+    left: '#F2C43D',
+    right: '#BC8606',
+    bottom: '#8C6100',
+  },
+  // Emerald Green
+  '#48BB78': {
+    base: '#44BA4A',
+    top: '#8BE590',
+    left: '#64D46A',
+    right: '#279B2E',
+    bottom: '#17701C',
+  },
+  // Coral / Red
+  '#E63946': {
+    base: '#D9363E',
+    top: '#F87F86',
+    left: '#E8565D',
+    right: '#B01E25',
+    bottom: '#850F15',
+  },
+  // Pink
+  '#EC4899': {
+    base: '#E03387',
+    top: '#F986BE',
+    left: '#ED569E',
+    right: '#B51B64',
+    bottom: '#870E48',
+  },
+};
+
 export const PIECE_COLORS = [
-  '#38BDF8', // Cyan / Sky Blue
-  '#3B82F6', // Royal Blue
-  '#F97316', // Bright Orange
-  '#A855F7', // Vivid Purple
-  '#EAB308', // Gold / Yellow
-  '#22C55E', // Emerald Green
-  '#EF4444', // Red
-  '#EC4899', // Pink
+  '#38BDF8', // Cyan
+  '#4361EE', // Blue
+  '#F77F00', // Orange
+  '#9D4EDD', // Purple
+  '#EBB305', // Gold / Yellow
+  '#48BB78', // Green
+  '#E63946', // Red
 ] as const;
+
 
 export interface ShapeDefinition {
   name: string;

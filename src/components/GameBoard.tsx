@@ -7,6 +7,7 @@ interface GameBoardProps {
   activePiece: Piece | null;
   hoverPos: Position | null;
   isValidPlacement: boolean;
+  previewCompletedLines?: { rows: number[]; cols: number[] };
   focusedCellPos?: Position | null;
   boardRef: React.RefObject<HTMLDivElement | null>;
 }
@@ -16,6 +17,7 @@ export const GameBoard: React.FC<GameBoardProps> = React.memo(({
   activePiece,
   hoverPos,
   isValidPlacement,
+  previewCompletedLines = { rows: [], cols: [] },
   focusedCellPos,
   boardRef,
 }) => {
@@ -38,13 +40,16 @@ export const GameBoard: React.FC<GameBoardProps> = React.memo(({
     return false;
   };
 
+  const completedRows = previewCompletedLines.rows;
+  const completedCols = previewCompletedLines.cols;
+
   return (
-    <div className="w-full max-w-md mx-auto aspect-square p-1.5 sm:p-2 bg-[#141b36] rounded-xl sm:rounded-2xl border-2 border-[#1e2950] shadow-[0_8px_25px_rgba(0,0,0,0.6)] relative overflow-hidden">
+    <div className="w-full max-w-md mx-auto aspect-square p-2 bg-[#17203A] rounded-2xl border border-[#232F53] shadow-[0_12px_30px_rgba(0,0,0,0.45)] relative overflow-hidden">
       <div
         ref={boardRef}
         role="grid"
         aria-label="Block Blast 8x8 Puzzle Board"
-        className="w-full h-full grid grid-cols-8 grid-rows-8 gap-0 bg-[#161e3b] touch-none"
+        className="w-full h-full grid grid-cols-8 grid-rows-8 gap-[1.5px] bg-[#12182B] rounded-xl overflow-hidden touch-none"
         style={{
           display: 'grid',
           gridTemplateColumns: `repeat(${boardSize}, minmax(0, 1fr))`,
@@ -55,6 +60,7 @@ export const GameBoard: React.FC<GameBoardProps> = React.memo(({
           rowCells.map((cell, c) => {
             const inPreview = isCellInPreview(r, c);
             const isFocused = focusedCellPos?.row === r && focusedCellPos?.col === c;
+            const isLineHighlight = completedRows.includes(r) || completedCols.includes(c);
             return (
               <GridCell
                 key={`${r}-${c}`}
@@ -63,6 +69,7 @@ export const GameBoard: React.FC<GameBoardProps> = React.memo(({
                 col={c}
                 isPreview={inPreview}
                 isValidPreview={isValidPlacement}
+                isLineHighlight={isLineHighlight}
                 isKeyboardFocused={isFocused}
               />
             );
@@ -74,3 +81,4 @@ export const GameBoard: React.FC<GameBoardProps> = React.memo(({
 });
 
 GameBoard.displayName = 'GameBoard';
+
